@@ -20,6 +20,7 @@ class kkPromise {
         console.log("执行了reject方法");
       }
     };
+    // executor会在new的时候直接被调用
     executor(resolve, reject);
   }
 }

@@ -49,72 +49,58 @@ class kkPromise {
     }
   }
   then(onFulfilled, onRejected) {
+    // catch方法重调了then方法，then的第二个回调是undefined，需要抛出异常
+    const defaultOnRejected = err => { throw err }
+    onRejected = onRejected || defaultOnRejected
+    const defaultOnFulfield = value => { return value }
+    onFulfilled = onFulfilled || defaultOnFulfield
+
     return new kkPromise((resolve, reject) => {
       if (this.status === PROMISE_STATUS_PEDNING) {
-        this.onFulfilledCallbacks.push(() => {
-          // try {
-          //   const value = onFulfilled(this.value);
-          //   resolve(value);
-          // } catch (err) {
-          //   reject(err);
-          // }
-          execFunctionWithCatchError(onFulfilled, this.value, resolve, reject);
-        });
-        this.onRejectedCallbacks.push(() => {
-          // try {
-          //   const reason = onRejected(this.reason);
-          //   resolve(reason);
-          // } catch (err) {
-          //   reject(err);
-          // }
-          execFunctionWithCatchError(onRejected, this.reason, resolve, reject);
-        });
+        if (onFulfilled) {
+          this.onFulfilledCallbacks.push(() => {
+            execFunctionWithCatchError(
+              onFulfilled,
+              this.value,
+              resolve,
+              reject
+            );
+          });
+        }
+        if (onRejected) {
+          this.onRejectedCallbacks.push(() => {
+            execFunctionWithCatchError(
+              onRejected,
+              this.reason,
+              resolve,
+              reject
+            );
+          });
+        }
       }
       if (this.status === PROMISE_STATUS_RESOLVE && onFulfilled) {
-        // try {
-        //   const value = onFulfilled(this.value);
-        //   resolve(value);
-        // } catch (err) {
-        //   reject(err);
-        // }
         execFunctionWithCatchError(onFulfilled, this.value, resolve, reject);
       }
       if (this.status === PROMISE_STATUS_REJECT && onRejected) {
-        try {
-          const reason = onRejected(this.reason);
-          resolve(reason);
-        } catch (err) {
-          reject(err);
-        }
         execFunctionWithCatchError(onRejected, this.reason, resolve, reject);
       }
     });
   }
+  catch(onRejected) {
+    return this.then(undefined, onRejected);
+  }
+  finally(onFinally) {
+    this.then(() => { onFinally() }, () => { onFinally() })
+  }
 }
 const promise = new kkPromise((resolve, reject) => {
-  // resolve(111);
-  reject(222);
-  // throw new Error("executor error");
+  resolve(111);
+  // reject(222);
 });
 // 优化：then方法的链式调用
 promise
-  .then(
-    (res) => {
-      console.log("res1:", res);
-      // return "aaa";
-      throw new Error("error message");
-    },
-    (err) => {
-      console.log("err1:", err);
-      // return "bbb";
-      throw new Error("error message");
-    }
-  )
-  .then(
-    (res) => {
-      console.log("res2:", res);
-    },
-    (err) => {
-      console.log("err2:", err);
-    }
-  );
+  .then((res) => { console.log("res1:", res); return 'aaa' })
+  .then((res) => { console.log("res2:", res) })
+  .catch((err) => { console.log("err2:", err) })
+  .finally(() => { console.log('finally'); });
+

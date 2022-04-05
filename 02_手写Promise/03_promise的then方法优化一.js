@@ -41,6 +41,7 @@ class kkPromise {
       this.onFulfilledCallbacks.push(onFulfilled);
       this.onRejectedCallbacks.push(onRejected);
     }
+    // 在有状态的情况下，再次调用then
     if (this.status === PROMISE_STATUS_RESOLVE && onFulfilled) {
       onFulfilled(this.value);
     }
@@ -50,7 +51,7 @@ class kkPromise {
   }
 }
 const promise = new kkPromise((resolve, reject) => {
-  // resolve(111);
+  resolve(111);
   reject(222);
 });
 //优化一、多次调用then方法，都可以执行

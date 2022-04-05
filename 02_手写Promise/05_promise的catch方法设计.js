@@ -71,7 +71,7 @@ class kkPromise {
         if (onRejected) {
           this.onRejectedCallbacks.push(() => {
             execFunctionWithCatchError(
-              onFulfilled,
+              onRejected,
               this.reason,
               resolve,
               reject
@@ -83,7 +83,7 @@ class kkPromise {
         execFunctionWithCatchError(onFulfilled, this.value, resolve, reject);
       }
       if (this.status === PROMISE_STATUS_REJECT && onRejected) {
-        execFunctionWithCatchError(onFulfilled, this.reason, resolve, reject);
+        execFunctionWithCatchError(onRejected, this.reason, resolve, reject);
       }
     });
   }
