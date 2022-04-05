@@ -11,4 +11,4 @@ function format(v) {
   return `${v}`.replace(reg, '$&,')
 
 }
-console.log(format(1234567890));
+console.log(format(1234567890)); 
