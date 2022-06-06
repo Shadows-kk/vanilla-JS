@@ -1,0 +1,44 @@
+< !DOCTYPE html >
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script>
+      // 求字典升序
+      let str = "112ac_***$fdsae";
+
+      function dicFn(value) {
+        let pattern1 = new RegExp("^[A-Za-z]+$");
+        let pattern2 = new RegExp("^[0-9]+$");
+        // 1.拆分字符串
+        let tempArr = [];
+        splitNumber(value);
+        function splitNumber(str) {
+          for (let j = 0; j < str.length - 1; j++) {
+            let s = str.substring(j, j + 2);
+            if (pattern1.test(s) || pattern2.test(s)) {
+              tempArr.push(s);
+            }
+          }
+        }
+        // 2.比较前后两位是否升序
+        let check = tempArr.filter((s) => {
+          return [...s].some((c, i, a) => {
+            if (i < a.length - 1) {
+              return parseInt(c, 36) < parseInt(a[i + 1], 36);
+            }
+          });
+        });
+        console.log(check);
+
+        // 3.返回字典序数量
+        return check.length;
+      }
+      dicFn(str);
+    </script>
+  </body>
+</html>
