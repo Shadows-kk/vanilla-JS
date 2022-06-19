@@ -9,7 +9,7 @@
   { type: 'event', value: { name: 'event1' }, count: 1 },
   { type: 'servive', value: { name: 'servive' }, count: 1 }
 ]*/
-arr = [
+const arr1 = [
   { type: 'inter', value: { name: 'interface1' } },
   { type: 'inter', value: { name: 'interface2' } },
   { type: 'meteric', value: { name: 'meteric1' } },
@@ -39,7 +39,7 @@ const formate1 = arr => {
   });
   return Object.values(obj)
 }
-console.log(formate(arr));
+// console.log(formate(arr1));
 
 // 数组转化形式2
 // [{
@@ -82,4 +82,81 @@ const formate2 = arr => {
   });
   return Object.values(obj)
 }
-console.log(formate(arr));
+// console.log(formate(arr));
+
+const arr3 = [
+  {
+    AbnormalFlagCount: 0,
+    Date: "2018年10月",
+    ExamCount: 69,
+    FilmNotPaymentCount: 6,
+    FilmPaymentCount: 63,
+    FilmPrintCount: 62,
+    ServiceSectID: "CT"
+  },
+  {
+    AbnormalFlagCount: 0,
+    Date: "2018年6月",
+    ExamCount: 64,
+    FilmNotPaymentCount: 12,
+    FilmPaymentCount: 52,
+    FilmPrintCount: 61,
+    ServiceSectID: "MR"
+  },
+  {
+    AbnormalFlagCount: 0,
+    Date: "2018年10月",
+    ExamCount: 54,
+    FilmNotPaymentCount: 1,
+    FilmPaymentCount: 53,
+    FilmPrintCount: 52,
+    ServiceSectID: "MR"
+  }
+]
+
+function changeArr(arr) {
+  let obj = {}
+  arr.forEach(item => {
+    if (!obj[item.Date]) {
+      obj[item.Date] = {
+        Date: item.Date,
+        value: [{
+          ServiceSectID: item.ServiceSectID, ExamCount: item.ExamCount,
+          FilmNotPaymentCount: item.FilmNotPaymentCount,
+          FilmPaymentCount: item.FilmPaymentCount
+        }]
+      }
+    } else {
+      obj[item.Date] = {
+        ...obj[item.Date]
+      }
+    }
+  });
+  return Object.values(obj)
+}
+//对象数组排序
+function compare(obj1, obj2) {
+  // 正则规则匹配数字
+  let o1Arr = obj1.Date.match(/\d+/g)
+  let o2Arr = obj2.Date.match(/\d+/g)
+  console.log(o1Arr, o2Arr);
+
+  if (o1Arr[0] * 1 < o2Arr[0] * 1) {
+    return -1
+  } else if (o1Arr[0] * 1 > o2Arr[0] * 1) {
+    return 1
+  } else {
+    if (o1Arr[1] * 1 < o2Arr[1] * 1) {
+      return -1
+    } else if (o1Arr[1] * 1 > o2Arr[1] * 1) {
+      return 1
+    } else {
+      return 0
+    }
+  }
+}
+
+console.log(arr3.sort(compare));
+
+
+
