@@ -1,7 +1,7 @@
 // 先安装 xlsx
 import XLSX from "xlsx";
 // 导出表格
-exportOutXLSX() {
+function exportOutXLSX() {
   let wb = XLSX.utils.table_to_book(
     document.querySelector("#statisticTable"),
     {
@@ -15,18 +15,18 @@ exportOutXLSX() {
     }),
     "orgcheck.xlsx"
   );
-},
-saveAs(obj, fileName) {
+};
+function saveAs(obj, fileName) {
   var tmpa = document.createElement("a");
   tmpa.download = fileName || "下载";
   tmpa.href = URL.createObjectURL(obj); //绑定a标签
   tmpa.click(); //模拟点击实现下载
-  setTimeout(function() {
+  setTimeout(function () {
     //延时释放
     URL.revokeObjectURL(obj); //用URL.revokeObjectURL()来释放这个object URL
   }, 100);
-},
-xlsxToArrayBuffer(s) {
+};
+function xlsxToArrayBuffer(s) {
   if (typeof ArrayBuffer !== "undefined") {
     var buf = new ArrayBuffer(s.length);
     var view = new Uint8Array(buf);

@@ -1,9 +1,9 @@
-getStatisticImg() {
+function getStatisticImg() {
   let canvasDom = document.getElementsByTagName("canvas")[0];
   this.exportChart(canvasDom);
-},
+};
 
-exportChart(canvas, fileName = "统计图", imageType = "png") {
+function exportChart(canvas, fileName = "统计图", imageType = "png") {
   if (canvas) {
     fileName = `${fileName}.${imageType}`;
     canvas.toBlob(blob => {
