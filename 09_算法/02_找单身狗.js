@@ -15,4 +15,3 @@ function uniquenumber(nums) {
   return nums.reduce((a, b) => a ^ b, 0)
 }
 console.log(uniquenumber(arr));
-

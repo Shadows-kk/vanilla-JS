@@ -19,7 +19,7 @@ function waterFall() {
   let itemWidth = item[0].clientWidth;
   let columns = parseInt(wrapWidth / (itemWidth + gap))
 
-  // 定义一个数组，用来保存元素的高度、
+  // 定义一个数组，用来保存元素的高度。
   let arr = []
   for (let i = 0; i < items.length; i++) {
     if (i < columns) {
