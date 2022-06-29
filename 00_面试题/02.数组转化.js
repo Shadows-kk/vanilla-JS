@@ -1,4 +1,4 @@
-// 数组转化形式1
+// 1.数组转化形式1
 /*[
   { type: 'inter', value: { name: 'interface1,interface2' }, count: 2 },
   {
@@ -41,7 +41,8 @@ const formate1 = arr => {
 }
 // console.log(formate(arr1));
 
-// 数组转化形式2
+
+// 2.数组转化形式2
 // [{
 //   ID: '2020年',
 //   '新商': { OrderQty: 1837, ActualReceipts: null },
@@ -84,6 +85,8 @@ const formate2 = arr => {
 }
 // console.log(formate(arr));
 
+
+// 3.对对象数组根据日期排序
 const arr3 = [
   {
     AbnormalFlagCount: 0,
@@ -134,7 +137,7 @@ function changeArr(arr) {
   });
   return Object.values(obj)
 }
-//对象数组排序
+//对上面的对象数组排序
 function compare(obj1, obj2) {
   // 正则规则匹配数字
   let o1Arr = obj1.Date.match(/\d+/g)
@@ -155,8 +158,73 @@ function compare(obj1, obj2) {
     }
   }
 }
+// console.log(arr3.sort(compare));
 
-console.log(arr3.sort(compare));
+// 4.处理数组
+const Arrdata = [
+  {
+    year: 2022,
+    name: 'lili',
+    age: 11,
+    sex: '女',
+    key: 1,
+    value: 20
+
+  },
+  {
+    year: 2022,
+    name: 'lili',
+    age: 11,
+    sex: '女',
+    key: 2,
+    value: 30
+
+  },
+  {
+    year: 2023,
+    name: 'zhangsan',
+    age: 18,
+    sex: '男',
+    key: 3,
+    value: 80
+  }
+]
+// 转换成 [
+//   ["", "", 'year', 2022, 2022, 2023],
+//   ["name", "age", "sex", "key1", "key2", "key3"],
+//   ["lili", 11, '女', 20, 30, ""],
+//   ["zhangsan", 18, '男', 80, "", ""],
+// ]
+function handle(arr) {
+  let newArr = []
+  let arr1 = ['', '', 'year']
+  let arr2 = ['name', 'age', 'sex']
+  let obj = {}
+  arr.forEach((item, index) => {
+    arr1.push(item.year)
+    arr2.push(`key${index + 1}`)
+    let iArr = new Array(6)
+    if (!obj[item.name]) {
+      obj[item.name] = [item.name, item.age, item.sex, item.value]
+    } else {
+      obj[item.name].push(item.value)
+    }
+  })
+  let objArr = Object.keys(obj)
+  objArr.forEach(name => {
+    const len = obj[name].length
+    let dis = 6 - len
+    for (let i = 0; i < dis; i++) {
+      obj[name].push('')
+    }
+  })
+
+  newArr.push(...Object.values(obj))
+  newArr.unshift(arr1, arr2)
+  return newArr
+}
+
+console.log(handle(Arrdata));
 
 
 
