@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+      }
+      body,
+      #app,
+      .container {
+        height: 100vh;
+        overflow: auto;
+        position: relative;
+        -webkit-overflow-scrolling: touch;
+      }
+      .list-all {
+      }
+      .list-view {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        text-align: center;
+      }
+      .item {
+        margin-bottom: 10px;
+        color: #333;
+        box-sizing: border-box;
+        border-bottom: 1px solid #999;
+        height: 50px;
+        line-height: 50px;
+        background: #46b00b;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="app">
+      <div class="container" ref="list" @scroll="scrollEvent">
+        <div class="list-all" :style="{height:listHeight + 'px'}"></div>
+        <div class="list-view" :style="{transform:getTransform}">
+          <div class="item" ref="items" v-for="item in viewData" :key="item.id">
+            {{item.value}}
+          </div>
+        </div>
+      </div>
+    </div>
+    <script>
+      // 虚拟列表实现
+      new Vue({
+        el: "#app",
+        data() {
+          return {
+            // 所有列表数据
+            listData: [],
+            // 每项高度
+            itemSize: 60,
+            // 可视区域高度
+            screenHeight: 0,
+            // 偏移量
+            startOffset: 0,
+            // 起始索引
+            start: 0,
+            // 结束索引
+            end: null,
+          };
+        },
+        computed: {
+          //列表总高度
+          listHeight() {
+            return this.listData.length * this.itemSize;
+          },
+          // 可显示的列表项数
+          visibleCount() {
+            return Math.ceil(this.screenHeight / this.itemSize);
+            // return Math.floor(this.screenHeight / this.itemSize);
+          },
+          // 偏移量对应的style
+          getTransform() {
+            // return `translate3d(0,${this.startOffset}px,0)`;
+            return `translateY(${this.startOffset}px)`;
+          },
+          // 获取真实显示列表数据
+          viewData() {
+            return this.listData.slice(
+              this.start,
+              Math.min(this.end, this.listData.length)
+            );
+          },
+        },
+        methods: {
+          // 初始化10w条数据
+          initeListData() {
+            for (let i = 0; i < 100000; i++) {
+              let item = {};
+              item.id = i + 1;
+              item.value = `10w条数据${i + 1}`;
+              this.listData.push(item);
+            }
+          },
+          scrollEvent() {
+            // 当前滚动位置
+            let scrollTop = this.$refs.list.scrollTop;
+            // 此时开始索引
+            this.start = Math.floor(scrollTop / this.itemSize);
+            // 此时结束索引
+            this.end = this.start + this.visibleCount;
+            // 此时偏移量
+            this.startOffset = scrollTop - (scrollTop % this.itemSize);
+          },
+        },
+        created() {
+          this.initeListData();
+        },
+        mounted() {
+          this.screenHeight = this.$el.clientHeight;
+          console.log(this.$el);
+          this.start = 0;
+          this.end = this.start + this.visibleCount;
+        },
+      });
+    </script>
+  </body>
+</html>
