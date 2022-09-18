@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <button onclick="exportExcel()">导出表格</button>
+    <script src="./JSONToExcelConvertor.js"></script>
+    <script>
+      function exportExcel() {
+        JSONToExcelConvertor(
+          [
+            {
+              id: 1,
+              name: { value: "<b>章三</b>", color: "red", width: 100 },
+              age: 18,
+            },
+            {
+              id: 2,
+              name: {
+                value: "李四",
+                backgroundColor: "blue",
+                color: "white",
+                width: 100,
+              },
+              age: 19,
+            },
+            { id: 3, name: "王五", age: 20 },
+          ],
+          "用户信息",
+          ["ID", "姓名", "年龄"]
+        );
+      }
+    </script>
+  </body>
+</html>
