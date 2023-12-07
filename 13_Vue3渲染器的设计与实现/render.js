@@ -140,7 +140,7 @@ function createRenderer(options) {
         n2.children.forEach((c) => patch(null, c, container));
 
         // 优化性能，需要diff算法
-        // updateChildren()
+        // updateChildren(n1,n2,container);
       } else {
         //旧的子节点不是数组，不管是文本子节点还是不存在
         // 都需要先清空容器，然后逐一挂载新的子节点
