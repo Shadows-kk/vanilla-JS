@@ -1,7 +1,7 @@
 function createRenderer(options) {
   const { createElement, setElementText, insert } = options;
   // patch函数
-  function patch(n1, n2, container) {
+  function patch(n1, n2, container, anchor = null) {
     if (n1 && n1.type !== n2.type) {
       unmount(n1);
       n1 = null;
@@ -12,7 +12,7 @@ function createRenderer(options) {
     if (typeof type === "string") {
       // 如果n1不存在，意味着挂载，调用mountElement函数完成挂载
       if (!n1) {
-        mountElement(n2, container);
+        mountElement(n2, container, anchor);
       } else {
         // n1存在，意味着新旧节点类型相同，打补丁，即更新
         patchElement(n1, n2);
@@ -57,7 +57,7 @@ function createRenderer(options) {
     return key in el;
   }
   // 挂载函数
-  function mountElement(vnode, container) {
+  function mountElement(vnode, container, anchor) {
     // 调用createElement创建DOM元素
     // 让vnode.el引用真实的DOM元素
     const el = (vnode.el = createElement(vnode.type));
@@ -81,7 +81,7 @@ function createRenderer(options) {
     }
 
     // 调用insert将元素添加到容器中
-    insert(el, container);
+    insert(el, container, anchor);
   }
   // 卸载函数封装道unmount中，一是能调用绑定在dom元素上的指令钩子函数，
   // 二是能检测vnode的类型，是组件的话可以调用相关的生命周期
@@ -100,6 +100,7 @@ function createRenderer(options) {
   }
   // 对比新旧节点 打补丁
   function patchElement(n1, n2) {
+    // 新的vnode也引用了真实的DOM元素 意义是dom元素的复用
     const el = (n1.el = n2.el);
     const oldProps = n1.props || {};
     const newProps = n2.props || {};
@@ -132,9 +133,14 @@ function createRenderer(options) {
       // 新子节点是一组子节点时
       // 判断旧的子节点是否也是数组
       if (Array.isArray(n1.children)) {
-        // 代码走到这里，说明新旧子节点都是一组子节点，用到核心的diff算法
-        // diff算法
-        updateChildren(n1.children, n2.children, container);
+        // 傻瓜式的方法，极其消耗性能
+        // 旧的一组子节点全部卸载
+        n1.children.forEach((c) => unmount(c));
+        // 新的一组子节点全部挂载
+        n2.children.forEach((c) => patch(null, c, container));
+
+        // 优化性能，需要diff算法
+        // updateChildren()
       } else {
         //旧的子节点不是数组，不管是文本子节点还是不存在
         // 都需要先清空容器，然后逐一挂载新的子节点
