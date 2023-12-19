@@ -53,9 +53,9 @@ function updateChildren(n1, n2, container) {
         // 如果没有，说明即将挂载的新节点是第一个子节点
         anchor = container.fistChild;
       }
+      // 挂载vNode
+      patch(null, newVNode, container, anchor);
     }
-    // 挂载vNode
-    patch(null, newVNode, container, anchor);
   }
 
   // 更新操作完成以后，遍历旧的一组子节点，移除新节点中不存在的旧节点
