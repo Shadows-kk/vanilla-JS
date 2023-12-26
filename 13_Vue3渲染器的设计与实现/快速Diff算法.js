@@ -50,5 +50,51 @@ function patchKeyedChildren(n1, n2, container) {
     while (j <= oldEnd) {
       unmount(oldChildren[j++]);
     }
+  } else {
+    // 处理非理想情况
+    // 构建source数组，用来存储每个newVNode在oldVNode中的索引位置
+    const count = newEnd - j + 1;
+    const source = new Array(count).fill(-1);
+    // oldStart和newStart为起始索引
+    const oldStart = j;
+    const newStart = j;
+    // 新增两个变量，moved和pos
+    let moved = false;
+    let pos = 0;
+    // 构建索引表，用来快速填充source数组，而非采用双层for循环
+    const keyIndex = {};
+    for (let i = newStart; i <= newEnd; i++) {
+      keyIndex[newChildren[i].key] = i;
+    }
+    // 新增patched变量，代表更新过节点的数量
+    let patched = 0;
+    // 遍历旧节点中未被处理的节点
+    for (let i = oldStart; i < oldEnd; i++) {
+      const oldVNode = oldChildren[i];
+      // 如果更新的节点数量小于等于需要更新的节点数量，则执行更新
+      if (patched <= count) {
+        // 通过索引表,快速找到新的一组子节点中具有与旧节点相同key值的节点索引位置
+        const k = keyIndex[oldVNode.key];
+        if (typeof k !== "undefined") {
+          newVNode = newChildren[k];
+          patch(oldVNode, newVNode, container);
+          patched++;
+          // 更新source数组
+          source[k - newStart] = i;
+          // 判断节点是否需要移动
+          if (k < pos) {
+            moved = true;
+          } else {
+            pos = k;
+          }
+        } else {
+          // 没找到
+          unmount(oldVNode);
+        }
+      } else {
+        // 如果更新的节点数量大于需要更新的节点数量，则卸载多余的节点
+        unmount(oldVNode);
+      }
+    }
   }
 }
