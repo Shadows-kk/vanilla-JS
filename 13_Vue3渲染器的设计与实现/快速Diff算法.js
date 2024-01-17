@@ -96,5 +96,82 @@ function patchKeyedChildren(n1, n2, container) {
         unmount(oldVNode);
       }
     }
+    if (moved) {
+      // 获取最长递增子序列
+      const seq = getSequence(source);
+      // s指向最长递增子序列的最后一个元素
+      let s = seq.length - 1;
+      // i指向新的一组子节点的最后一个元素
+      let i = count - 1;
+      for (i; i >= 0; i--) {
+        if (source[i] === -1) {
+          // 说明索引为i的节点是全新节点，应该将其挂载
+          const pos = i + newStart; //该节点在newChildren的真实位置
+          const newVNode = newChildren[pos];
+          // 该节点的下一个节点的位置索引
+          const newPos = pos + 1;
+          // 锚点
+          const anchor =
+            newPos < newChildren.length ? newChildren[newPos].el : null;
+          // 挂载
+          patch(null, newVNode, container, anchor);
+        } else if (i !== seq[s]) {
+          // 节点的索引不等于seq[s]的值，说明需要移动
+          // 该节点在新的一组子节点中的真实位置索引
+          const pos = i + newStart;
+          const newVNode = newChildren[pos];
+          // 该节点下一个位置的索引
+          const nextPos = pos + 1;
+          // 锚点
+          const anchor =
+            newPos < newChildren.length ? newChildren[newPos].el : null;
+          // 移动
+          insert(newVNode.el, container, anchor);
+        } else {
+          s--;
+        }
+      }
+    }
   }
+}
+// 最长递增子序列算法
+function getSequence(arr) {
+  const p = arr.slice();
+  const result = [0];
+  let i, j, u, v, c;
+  const len = arr.length;
+  for (let i = 0; i < len; i++) {
+    const arrI = arr[i];
+    if (arrI !== 0) {
+      j = result[result.length - 1];
+      if (arr[j] < arrI) {
+        p[i] = j;
+        result.push(i);
+        continue;
+      }
+      u = 0;
+      v = result.length - 1;
+      while (u < v) {
+        c = ((u + v) / 2) | 0;
+        if (arr[result[c]] < arrI) {
+          u = c + 1;
+        } else {
+          v = c;
+        }
+      }
+      if (arrI < arr[result[u]]) {
+        if (u > 0) {
+          p[i] = result[u - 1];
+        }
+        result[u] = i;
+      }
+    }
+  }
+  u = result.length;
+  v = result[u - 1];
+  while (u-- > 0) {
+    result[u] = v;
+    v = p[v];
+  }
+  return result;
 }
