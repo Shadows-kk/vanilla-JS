@@ -43,6 +43,11 @@ function createRenderer(options) {
       }
     } else if (typeof type === "object") {
       // 如果是对象类型，描述的是组件
+      if (!n1) {
+        mountComponent(n2, container, anchor);
+      } else {
+        patchComponent(n1, n2, anchor);
+      }
     } else {
       // 处理其他类型的vnode
     }
@@ -160,6 +165,10 @@ function createRenderer(options) {
     }
   }
   function updateChildren() {}
+  // 挂载组件
+  function mountComponent(vnode, container, anchor){}
+  // 更新组件
+  function patchComponent(n1, n2, container){}
   // 渲染函数
   function render(vnode, container) {
     if (vnode) {
