@@ -166,7 +166,9 @@ function createRenderer(options) {
   }
   function updateChildren() {}
   // 挂载组件
-  function mountComponent(vnode, container, anchor){}
+  function mountComponent(vnode, container, anchor){
+    
+  }
   // 更新组件
   function patchComponent(n1, n2, container){}
   // 渲染函数
